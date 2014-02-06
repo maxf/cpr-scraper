@@ -47,7 +47,7 @@
     }
 
     // generate the opf file
-    opf_file = fs.openSync(html_subdir+"/content.opf", "w");
+    opf_file = fs.openSync(html_subdir+"/OPS/content.opf", "w");
     fs.writeSync(opf_file, '<?xml version="1.0" encoding="UTF-8"?>\
 \
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="EPB-UUID" version="2.0">\
@@ -71,10 +71,9 @@
 
     // spine
     for(i=0;i<index_links_array.length;i++) {
-      basename = index_links_array[i].id;
-      spine.push('<itemref idref="'+basename+'" linear="yes"/>');
+      spine.push('<itemref idref="'+index_links_array[i].id+'" linear="yes"/>');
     }
-    fs.writeSync(opf_file, '<spine>'+manifest.join('\n')+'</spine>\n');
+    fs.writeSync(opf_file, '<spine>'+spine.join('\n')+'</spine>\n');
 
     fs.writeSync(opf_file, '</package>');
     fs.closeSync(opf_file);
@@ -122,7 +121,7 @@
             setTimeout(fetch_page, delay);
             return;
           }
-          file = fs.openSync(html_subdir + "/" + index_link.id + ".xhtml", "w");
+          file = fs.openSync(html_subdir + "/OPS/" + index_link.id + ".xhtml", "w");
           fs.writeSync(file,html_header(title) + html + html_footer());
           process.stdout.write(".");
           fs.closeSync(file);
