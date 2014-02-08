@@ -59,7 +59,7 @@
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="EPB-UUID" version="2.0">\
    <metadata xmlns:opf="http://www.idpf.org/2007/opf"\
              xmlns:dc="http://purl.org/dc/elements/1.1/">\
-      <dc:title>Civil Procedure Rule</dc:title>\
+      <dc:title>Civil Procedure Rules</dc:title>\
       <dc:publisher>Ministry of Justice</dc:publisher>\
       <dc:date opf:event="epub-publication">2014-01-01</dc:date>\
       <dc:subject>Legal</dc:subject>\
