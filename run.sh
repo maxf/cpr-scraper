@@ -2,5 +2,5 @@
 node scrape
 rm cpr.epub
 cd scraped
-zip -r ../cpr.epub *
+zip -q -r ../cpr.epub *
 
