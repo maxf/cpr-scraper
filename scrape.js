@@ -46,6 +46,12 @@
       }
     }
 
+    // debug
+//    index_links_array = [
+//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/part41","id":"id-0"}
+//    ];
+
+
     // generate the opf file
     opf_file = fs.openSync(html_subdir+"/OPS/content.opf", "w");
     fs.writeSync(opf_file, '<?xml version="1.0" encoding="UTF-8"?>\
@@ -78,15 +84,6 @@
     fs.writeSync(opf_file, '</package>');
     fs.closeSync(opf_file);
 
-    // debug
-//    index_links_array = [
-//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/part51/practice-direction-51i-the-second-mediation-service-pilot-scheme","basename":"part51_practice-direction-51i-the-second-mediation-service-pilot-scheme"},
-//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/devolution_issues","basename":"devolution_issues"},
-//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/devolution_issues_welsh","basename":"devolution_issues_welsh"},
-//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/appforwarrant","basename":"appforwarrant"},
-//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/part08/pd_part08b","basename":"part08_pd_part08b"},
-//      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/insolvency_pd","basename":"insolvency_pd"}
-//    ];
 
     async.forEach(index_links_array, function(index_link, callback) {
 
@@ -100,17 +97,14 @@
           try {
             context = $("div.article");
             $("a[href='#Back-to-top']", context).remove();
-//            $("a:empty", context).remove();
             $("a", context).removeAttr("name");
             $("t", context).remove(); // found in a file
             $("del", context).removeAttr("class");
             $("div.backToTop", context).remove();
             $("p:empty", context).remove();
-//            $("table", context).remove();
             $("hr", context).remove(); // for now @@
             $("img", context).remove(); // for now @@
             html = context.html();
-
             html = html.replace(/<!--.*-->/gim,'').
                         replace(/( ){2,}/gm,' ').
                         replace(/<\/p>/g,'</p>\n').
@@ -122,6 +116,9 @@
                         replace(/<col\s([^>]+)>/g,'<col $1/>').
                         replace(/^ +/gm,'').
                         replace(/(\r\n|\n|\r){2,}/gm,'\n');
+
+            html = html.split(index_link.href).join(''); // hack for global replace of string (not regexp)
+
             title = $("h1").first().text();
           } catch(e) {
             var delay = Math.floor(Math.random()*10000);
