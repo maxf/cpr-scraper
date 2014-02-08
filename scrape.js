@@ -78,7 +78,7 @@
     fs.writeSync(opf_file, '</package>');
     fs.closeSync(opf_file);
 
-//    // debug
+    // debug
 //    index_links_array = [
 //      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/part51/practice-direction-51i-the-second-mediation-service-pilot-scheme","basename":"part51_practice-direction-51i-the-second-mediation-service-pilot-scheme"},
 //      {"href":"http://www.justice.gov.uk/courts/procedure-rules/civil/rules/devolution_issues","basename":"devolution_issues"},
@@ -100,10 +100,13 @@
           try {
             context = $("div.article");
             $("a[href='#Back-to-top']", context).remove();
-            $("a:empty", context).remove();
+//            $("a:empty", context).remove();
+            $("a", context).removeAttr("name");
+            $("t", context).remove(); // found in a file
+            $("del", context).removeAttr("class");
             $("div.backToTop", context).remove();
             $("p:empty", context).remove();
-            $("table", context).remove();
+//            $("table", context).remove();
             $("hr", context).remove(); // for now @@
             $("img", context).remove(); // for now @@
             html = context.html();
@@ -111,7 +114,12 @@
             html = html.replace(/<!--.*-->/gim,'').
                         replace(/( ){2,}/gm,' ').
                         replace(/<\/p>/g,'</p>\n').
+                        replace(/href="#/g,'href="#id').
+                        replace(/id="/g,'id="id').
                         replace(/<p>/g,'\n<p>').
+                        replace(/<br>/g,'<br/>').
+                        replace(/<col>/g,'<col/>').
+                        replace(/<col\s([^>]+)>/g,'<col $1/>').
                         replace(/^ +/gm,'').
                         replace(/(\r\n|\n|\r){2,}/gm,'\n');
             title = $("h1").first().text();
