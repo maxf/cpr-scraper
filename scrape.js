@@ -10,14 +10,14 @@
     async = require('async'),
     fs = require('fs'),
     html_subdir = "scraped",
-    url, arg,
+    url, book_name,
 
     html_header = function(title) {
       var head = '<?xml version="1.0" encoding="UTF-8"?>\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">\
   <head>\
-    <title>'+title+'</title>\
+    <title>'+htmlSpecialChars(title)+'</title>\
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>\
   </head>\
   <body>\
@@ -29,7 +29,15 @@
       return "</body></html>";
     },
 
-    scrape_volume = function (url) {
+    htmlSpecialChars = function(unsafe) {
+      return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+    },
+
+    scrape_volume = function (book_name,url) {
       request(url, function(err, resp, body) {
         var a, $, index_links, index_links_array=[], opf_file, i, basename, manifest=[], spine=[];
         if (err) {
@@ -60,7 +68,7 @@
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="EPB-UUID" version="2.0">\
    <metadata xmlns:opf="http://www.idpf.org/2007/opf"\
              xmlns:dc="http://purl.org/dc/elements/1.1/">\
-      <dc:title>Civil Procedure Rules</dc:title>\
+      <dc:title>'+htmlSpecialChars(book_name)+'</dc:title>\
       <dc:publisher>Ministry of Justice</dc:publisher>\
       <dc:date opf:event="epub-publication">2014-01-01</dc:date>\
       <dc:subject>Legal</dc:subject>\
@@ -145,19 +153,17 @@
       });
     };
 
-  for (arg in process.argv) {
-    if (process.argv[arg].match(/^http:/)) {
-      url = process.argv[arg];
-      break;
-    }
-  }
-  if (url) {
+
+  url = process.argv[2];
+  book_name = process.argv[3];
+
+  if (url.match(/^http/)) {
     console.log(url);
   } else {
-    console.log("no url found in command line");
+    console.log("no valid url");
     return -1;
   }
 
-  scrape_volume(url);
+  scrape_volume(book_name,url);
   return 0;
 }());
