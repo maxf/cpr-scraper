@@ -10,6 +10,7 @@
     async = require('async'),
     fs = require('fs'),
     html_subdir = "scraped",
+    url, arg,
 
     html_header = function(title) {
       var head = '<?xml version="1.0" encoding="UTF-8"?>\
@@ -28,7 +29,7 @@
       return "</body></html>";
     },
 
-    scrape_index = function (url) {
+    scrape_volume = function (url) {
       request(url, function(err, resp, body) {
         var a, $, index_links, index_links_array=[], opf_file, i, basename, manifest=[], spine=[];
         if (err) {
@@ -41,7 +42,7 @@
         i=0;
         for (a in index_links) {
           if (index_links.hasOwnProperty(a) && index_links[a].name==="a" && index_links[a].attribs && index_links[a].attribs.href) {
-            basename = index_links[a].attribs.href.replace(/http:\/\/www\.justice\.gov\.uk\/courts\/procedure-rules\/civil\/rules\//,'');
+            basename = index_links[a].attribs.href.replace(url,'');
             basename = basename.replace('/','_');
             index_links_array.push({"href":index_links[a].attribs.href,"id":"id-"+(i++)});
           }
@@ -144,8 +145,19 @@
       });
     };
 
+  for (arg in process.argv) {
+    if (process.argv[arg].match(/^http:/)) {
+      url = process.argv[arg];
+      break;
+    }
+  }
+  if (url) {
+    console.log(url);
+  } else {
+    console.log("no url found in command line");
+    return -1;
+  }
 
-  scrape_index("http://www.justice.gov.uk/courts/procedure-rules/civil/rules");
-
-
+  scrape_volume(url);
+  return 0;
 }());
